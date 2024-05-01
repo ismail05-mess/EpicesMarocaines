@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Épices du Maroc{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+
+</head>
+<body>
+<header>
+    <!-- Navbar principale -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <!-- Titre ou Brand de la Navbar -->
+        <a class="navbar-brand" href="{{ path('homepage') }}">Épices du Maroc</a>
+
+        <!-- Bouton pour les écrans réduits -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Éléments de la Navbar -->
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+                <!-- Lien Accueil -->
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ path('homepage') }}">Accueil <span class="sr-only">(current)</span></a>
+                </li>
+                <!-- Lien Épices -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('epicepage') }}">Épices</a>
+                </li>
+                <!-- Lien Herbes -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('herbepage') }}">Herbes</a>
+                </li>
+                <form class="form-inline">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+{% block body %}{% endblock %}
+
+<footer>
+    {# Contenu du pied de page ici #}
+</footer>
+
+<script src="{{ asset('js/script.js') }}"></script>
+<script src="{{ asset('js/bootstrap.bundle.js') }}"></script>
+</body>
+</html>
