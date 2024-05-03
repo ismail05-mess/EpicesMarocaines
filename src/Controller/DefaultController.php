@@ -7,19 +7,27 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\ProduitRepository;
 use App\Repository\CategorieRepository;
+use App\Repository\RecetteRepository;
 
 class DefaultController extends AbstractController
 {
     #[Route('/', name: 'homepage')]
-    public function index(ProduitRepository $produitRepository): Response
+    public function index(ProduitRepository $produitRepository, RecetteRepository $recetteRepository): Response
     {
 
         $produitsPhares = $produitRepository->findBy(['estPhare' => true], null, 9);
         $nouveautes = $produitRepository->findBy(['estNouveau' => true], ['dateCreation' => 'DESC']);
-
+        $recettes = $recetteRepository->createQueryBuilder('r')
+            ->leftJoin('r.produits', 'p')
+            ->addSelect('p') // Ajouter les produits à la sélection pour le chargement eager
+            ->orderBy('r.id', 'DESC')
+            ->setMaxResults(6)
+            ->getQuery()
+            ->getResult();
         return $this->render('default/index.html.twig', [
             'featured_products' => $produitsPhares,
             'new_arrivals' => $nouveautes,
+            'recettes' => $recettes
         ]);
     }
 
@@ -62,5 +70,18 @@ class DefaultController extends AbstractController
         ]);
     }
 
+    #[Route('/recette/{id}', name: 'recette_detail')]
+    public function recetteDetail(RecetteRepository $recetteRepository, int $id): Response
+    {
+        $recette = $recetteRepository->find($id);
+
+        if (!$recette) {
+            throw $this->createNotFoundException('La recette demandée n\'existe pas.');
+        }
+
+        return $this->render('default/detailrecette.html.twig', [
+            'recette' => $recette
+        ]);
+    }
 
 }

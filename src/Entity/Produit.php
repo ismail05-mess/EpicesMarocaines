@@ -13,54 +13,55 @@ class Produit
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Nom = null;
+    private ?string $nom = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $Description = null;
+    #[ORM\Column(type: "text")]
+    private ?string $description = null;
 
-    #[ORM\Column]
-    private ?float $Prix = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $Image = null;
-
-    #[ORM\Column]
-    private ?int $Stock = null;
-
-    #[ORM\Column]
-    private ?float $PoidsNet = null;
+    #[ORM\Column(type: "float")]
+    private ?float $prix = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Origine = null;
+    private ?string $image = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $Proprietes = null;
+    #[ORM\Column(type: "integer")]
+    private ?int $stock = null;
+
+    #[ORM\Column(type: "float")]
+    private ?float $poidsNet = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $origine = null;
+
+    #[ORM\Column(type: "text")]
+    private ?string $proprietes = null;
 
     #[ORM\Column(name: "date_creation", type: "datetime")]
-    private ?\DateTimeInterface $dateCreation;
-    #[ORM\Column(type: "boolean")]
-    private $estPhare;
+    private ?\DateTimeInterface $dateCreation = null;
 
     #[ORM\Column(type: "boolean")]
-    private $estNouveau;
+    private ?bool $estPhare = null;
 
+    #[ORM\Column(type: "boolean")]
+    private ?bool $estNouveau = null;
 
-    #[ORM\ManyToOne(inversedBy: 'produits')]
+    #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'produits')]
     private ?Categorie $categorie = null;
 
-    /**
-     * @var Collection<int, Commande>
-     */
     #[ORM\ManyToMany(targetEntity: Commande::class, mappedBy: 'produits')]
     private Collection $commandes;
+
+    #[ORM\ManyToMany(targetEntity: Recette::class, mappedBy: 'produits')]
+    private Collection $recettes;
 
     public function __construct()
     {
         $this->commandes = new ArrayCollection();
+        $this->recettes = new ArrayCollection();
         $this->dateCreation = new \DateTime();
     }
 
@@ -71,100 +72,100 @@ class Produit
 
     public function getNom(): ?string
     {
-        return $this->Nom;
+        return $this->nom;
     }
 
-    public function setNom(string $Nom): self
+    public function setNom(string $nom): self
     {
-        $this->Nom = $Nom;
+        $this->nom = $nom;
         return $this;
     }
 
     public function getDescription(): ?string
     {
-        return $this->Description;
+        return $this->description;
     }
 
-    public function setDescription(string $Description): self
+    public function setDescription(string $description): self
     {
-        $this->Description = $Description;
+        $this->description = $description;
         return $this;
     }
 
     public function getPrix(): ?float
     {
-        return $this->Prix;
+        return $this->prix;
     }
 
-    public function setPrix(float $Prix): self
+    public function setPrix(float $prix): self
     {
-        $this->Prix = $Prix;
+        $this->prix = $prix;
         return $this;
     }
 
     public function getImage(): ?string
     {
-        return $this->Image;
+        return $this->image;
     }
 
-    public function setImage(string $Image): self
+    public function setImage(string $image): self
     {
-        $this->Image = $Image;
+        $this->image = $image;
         return $this;
     }
 
     public function getStock(): ?int
     {
-        return $this->Stock;
+        return $this->stock;
     }
 
-    public function setStock(int $Stock): self
+    public function setStock(int $stock): self
     {
-        $this->Stock = $Stock;
+        $this->stock = $stock;
         return $this;
     }
 
     public function getPoidsNet(): ?float
     {
-        return $this->PoidsNet;
+        return $this->poidsNet;
     }
 
-    public function setPoidsNet(float $PoidsNet): self
+    public function setPoidsNet(float $poidsNet): self
     {
-        $this->PoidsNet = $PoidsNet;
+        $this->poidsNet = $poidsNet;
         return $this;
     }
 
     public function getOrigine(): ?string
     {
-        return $this->Origine;
+        return $this->origine;
     }
 
-    public function setOrigine(string $Origine): self
+    public function setOrigine(string $origine): self
     {
-        $this->Origine = $Origine;
+        $this->origine = $origine;
         return $this;
     }
 
     public function getProprietes(): ?string
     {
-        return $this->Proprietes;
+        return $this->proprietes;
     }
 
-    public function setProprietes(string $Proprietes): self
+    public function setProprietes(string $proprietes): self
     {
-        $this->Proprietes = $Proprietes;
+        $this->proprietes = $proprietes;
         return $this;
     }
 
     public function getDateCreation(): ?\DateTimeInterface
     {
-        return $this->DateCreation;
+        return $this->dateCreation;
     }
 
-    public function setDateCreation(\DateTimeInterface $DateCreation): self
+    public function setDateCreation(\DateTimeInterface $dateCreation): self
     {
-        $this->DateCreation = $DateCreation;
+        $this->dateCreation = $dateCreation;
         return $this;
     }
 
@@ -201,9 +202,6 @@ class Produit
         return $this;
     }
 
-    /**
-     * @return Collection<int, Commande>
-     */
     public function getCommandes(): Collection
     {
         return $this->commandes;
@@ -223,6 +221,30 @@ class Produit
     {
         if ($this->commandes->removeElement($commande)) {
             $commande->removeProduit($this);
+        }
+
+        return $this;
+    }
+
+    public function getRecettes(): Collection
+    {
+        return $this->recettes;
+    }
+
+    public function addRecette(Recette $recette): self
+    {
+        if (!$this->recettes->contains($recette)) {
+            $this->recettes->add($recette);
+            $recette->addProduit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecette(Recette $recette): self
+    {
+        if ($this->recettes->removeElement($recette)) {
+            $recette->removeProduit($this);
         }
 
         return $this;

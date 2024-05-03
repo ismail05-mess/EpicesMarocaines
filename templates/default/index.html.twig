@@ -135,11 +135,6 @@
             padding: 25px;
         }
     </style>
-
-
-
-
-    <!-- Autres sections -->
     <section class="new-arrivals py-5 bg-light">
         <div class="container">
             <h2 class="text-center mb-4 display-4">C'est Nouveau !!</h2>
@@ -178,5 +173,24 @@
             </div>
         </div>
     </section>
+
+    <div class="container py-4">
+        <h1 class="text-center mb-3">Nos Recettes</h1>
+        <div class="row">
+            {% for recette in recettes %}
+                <div class="recette">
+                    <h2>{{ recette.nom }}</h2>
+                    <p>{{ recette.description | slice(0, 100) ~ '...' }}</p>
+                    <a href="{{ path('recette_detail', {'id': recette.id}) }}" class="btn btn-primary">Voir plus</a>
+                </div>
+
+            {% else %}
+                <div class="col-12">
+                    <p class="text-center">Aucune recette disponible.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2-dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

@@ -3,10 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\RecetteRepository;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RecetteRepository::class)]
 class Recette
@@ -34,20 +34,16 @@ class Recette
     #[ORM\Column(length: 255)]
     private ?string $image = null;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Produit")
-     * @ORM\JoinTable(name="recette_produit",
-     *      joinColumns={@ORM\JoinColumn(name="recette_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="produit_id", referencedColumnName="id")}
-     * )
-     */
-    private $produits;
+    // Here we ensure the relationship is correctly set up for bi-directional communication
+    #[ORM\ManyToMany(targetEntity: Produit::class, inversedBy: 'recettes')]
+    #[ORM\JoinTable(name: "recette_produit")]
+    private Collection $produits;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->produits = new ArrayCollection();
     }
 
-// Getter and Setter for $produits
     public function getProduits(): Collection
     {
         return $this->produits;
@@ -57,6 +53,7 @@ class Recette
     {
         if (!$this->produits->contains($produit)) {
             $this->produits[] = $produit;
+            $produit->addRecette($this); // Ensure backlink is established
         }
 
         return $this;
@@ -64,7 +61,9 @@ class Recette
 
     public function removeProduit(Produit $produit): self
     {
-        $this->produits->removeElement($produit);
+        if ($this->produits->removeElement($produit)) {
+            $produit->removeRecette($this);
+        }
 
         return $this;
     }
@@ -79,10 +78,9 @@ class Recette
         return $this->nom;
     }
 
-    public function setNom(string $nom): static
+    public function setNom(string $nom): self
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -91,10 +89,9 @@ class Recette
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(string $description): self
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -103,10 +100,9 @@ class Recette
         return $this->instructions;
     }
 
-    public function setInstructions(string $instructions): static
+    public function setInstructions(string $instructions): self
     {
         $this->instructions = $instructions;
-
         return $this;
     }
 
@@ -115,10 +111,9 @@ class Recette
         return $this->tempsPreparation;
     }
 
-    public function setTempsPreparation(int $tempsPreparation): static
+    public function setTempsPreparation(int $tempsPreparation): self
     {
         $this->tempsPreparation = $tempsPreparation;
-
         return $this;
     }
 
@@ -127,10 +122,9 @@ class Recette
         return $this->tempsCuisson;
     }
 
-    public function setTempsCuisson(int $tempsCuisson): static
+    public function setTempsCuisson(int $tempsCuisson): self
     {
         $this->tempsCuisson = $tempsCuisson;
-
         return $this;
     }
 
@@ -139,10 +133,9 @@ class Recette
         return $this->image;
     }
 
-    public function setImage(string $image): static
+    public function setImage(string $image): self
     {
         $this->image = $image;
-
         return $this;
     }
 }
