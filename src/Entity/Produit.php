@@ -7,60 +7,70 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 class Produit
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GenearatedValue]
     #[ORM\Column(type: "integer")]
+    #[Groups(['produit', 'categorie', 'recette'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['produit', 'categorie', 'recette'])]
     private ?string $nom = null;
 
     #[ORM\Column(type: "text")]
+    #[Groups(['produit', 'recette'])]
     private ?string $description = null;
 
     #[ORM\Column(type: "float")]
+    #[Groups(['produit', 'recette'])]
     private ?float $prix = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['produit'])]
     private ?string $image = null;
 
     #[ORM\Column(type: "integer")]
+    #[Groups(['produit'])]
     private ?int $stock = null;
 
     #[ORM\Column(type: "float")]
+    #[Groups(['produit'])]
     private ?float $poidsNet = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['produit'])]
     private ?string $origine = null;
 
     #[ORM\Column(type: "text")]
+    #[Groups(['produit'])]
     private ?string $proprietes = null;
 
     #[ORM\Column(name: "date_creation", type: "datetime")]
+    #[Groups(['produit'])]
     private ?\DateTimeInterface $dateCreation = null;
 
     #[ORM\Column(type: "boolean")]
+    #[Groups(['produit'])]
     private ?bool $estPhare = null;
 
     #[ORM\Column(type: "boolean")]
+    #[Groups(['produit'])]
     private ?bool $estNouveau = null;
 
     #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'produits')]
+    #[Groups(['produit'])]
     private ?Categorie $categorie = null;
-
-    #[ORM\ManyToMany(targetEntity: Commande::class, mappedBy: 'produits')]
-    private Collection $commandes;
 
     #[ORM\ManyToMany(targetEntity: Recette::class, mappedBy: 'produits')]
     private Collection $recettes;
 
     public function __construct()
     {
-        $this->commandes = new ArrayCollection();
         $this->recettes = new ArrayCollection();
         $this->dateCreation = new \DateTime();
     }
@@ -199,30 +209,6 @@ class Produit
     public function setCategorie(?Categorie $categorie): self
     {
         $this->categorie = $categorie;
-        return $this;
-    }
-
-    public function getCommandes(): Collection
-    {
-        return $this->commandes;
-    }
-
-    public function addCommande(Commande $commande): self
-    {
-        if (!$this->commandes->contains($commande)) {
-            $this->commandes->add($commande);
-            $commande->addProduit($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommande(Commande $commande): self
-    {
-        if ($this->commandes->removeElement($commande)) {
-            $commande->removeProduit($this);
-        }
-
         return $this;
     }
 

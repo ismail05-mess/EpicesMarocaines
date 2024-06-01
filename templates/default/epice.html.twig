@@ -3,45 +3,11 @@
 {% block title %}Nos Épices{% endblock %}
 
 {% block body %}
-    <div class="container py-4">
-        <h1 class="text-center mb-3">Nos Épices</h1>
-        <div class="d-flex justify-content-end mb-2">
-            <button id="grid-view" class="btn btn-secondary mr-2" onclick="setGridView()">Grille</button>
-            <button id="list-view" class="btn btn-secondary" onclick="setListView()">Liste</button>
-        </div>
-        <div class="row" id="products-container">
-            {% for produit in produits %}
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100"> <!-- Use h-100 for equal height cards -->
-                        <img src="{{ asset('images/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.nom }}" style="height: 200px; object-fit: cover;"> <!-- Uniform image height -->
-                        <div class="card-body d-flex flex-column"> <!-- Flex column for content alignment -->
-                            <h5 class="card-title">{{ produit.nom }}</h5>
-                            <p class="card-text">{{ produit.description }}</p>
-                            <p class="text-muted"><small>{{ produit.proprietes }}</small></p>
-                            <div class="mt-auto">
-                                <span class="text-muted">Prix: {{ produit.prix | number_format(2, ',', ' ') }} €</span>
-                                <button class="btn btn-primary float-right">Savoir Plus +</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% else %}
-                <div class="col-12">
-                    <p class="text-center">Aucun produit à afficher.</p>
-                </div>
-            {% endfor %}
-        </div>
+    <div id="app">
+
     </div>
 {% endblock %}
 
 {% block javascripts %}
-    <script>
-        function setGridView() {
-            document.getElementById('products-container').className = 'row';
-        }
-
-        function setListView() {
-            document.getElementById('products-container').className = 'd-flex flex-column';
-        }
-    </script>
+    {{ encore_entry_script_tags('app') }}
 {% endblock %}
